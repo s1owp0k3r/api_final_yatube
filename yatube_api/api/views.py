@@ -1,14 +1,14 @@
 from django.shortcuts import get_object_or_404
-from rest_framework import viewsets, permissions
+from rest_framework import (
+    filters, mixins, permissions, viewsets
+)
 from rest_framework.pagination import LimitOffsetPagination
-from rest_framework import mixins
-from rest_framework import filters
 
 from posts.models import Group, Post
-from .serializers import (
-    CommentSerializer, GroupSerializer, PostSerializer, FollowSerializer
-)
 from .permissions import IsAuthorOrReadOnly
+from .serializers import (
+    CommentSerializer, FollowSerializer, GroupSerializer, PostSerializer
+)
 
 
 class PostViewSet(viewsets.ModelViewSet):
@@ -62,7 +62,7 @@ class FollowViewSet(CreateListViewSet):
 
     def get_queryset(self):
         """Запрос из базы данных подписок текущего пользователя."""
-        return self.request.user.followings
+        return self.request.user.followings.all()
 
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
